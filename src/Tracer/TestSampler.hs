@@ -13,8 +13,8 @@ testSampler = tracer trace
 
 
 -- Render in a 512x512 window, and (x, y) in [0, 10.83]^2
-trace :: TraceRayFn
-trace _ r = rgbcolor c c c
+trace :: TracerFn
+trace r = rgbcolor c c c
   where
     delta = 10.83 / 2.0
     x'    = (r&o&x) + delta

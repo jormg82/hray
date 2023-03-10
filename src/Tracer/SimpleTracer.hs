@@ -1,5 +1,5 @@
 
-module Tracer.SimpleTracer (simpleTracer) where
+module Tracer.SimpleTracer(simpleTracer) where
 
 import Object.Object
 import Utility.Scene
@@ -7,10 +7,10 @@ import Utility.ShadeRec
 import Tracer.Tracer
 
 
-simpleTracer :: Tracer
-simpleTracer = tracer trace
+simpleTracer :: Scene -> Tracer
+simpleTracer = tracer . trace
 
-trace :: TraceRayFn
+trace :: Scene -> TracerFn
 trace scene ray =
   case hit ray (objects scene) of
     Nothing        -> backgroundColor scene

@@ -6,7 +6,7 @@ module Utility.Point2D (
 
 
 
-data Point2D = Point2D {x :: Double, y :: Double}
+data Point2D = Point2D {x :: !Double, y :: !Double}
                deriving Show
 
 

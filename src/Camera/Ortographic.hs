@@ -38,8 +38,9 @@ processPixel sc vp sp tr (r, c) = do
   samples <- sampleUnitSquare sp
   let x      = (vp&s) * (fromIntegral c - 0.5*fromIntegral (vp&hres))
       y      = (vp&s) * (fromIntegral r - 0.5*fromIntegral (vp&vres))
-      colors = map (traceRay tr sc . genRay x y (vp&s)) samples
-  C.seqColor $ foldr1 C.add colors `C.divi` (fromIntegral $ numSamples sp)
+      colors = map (traceRay tr . genRay x y (vp&s)) samples
+  -- Se devuelve una computacion pura, forzamos su evaluacion
+  return $! foldr1 C.add colors `C.divi` (fromIntegral $ numSamples sp)
 
 
 genRay :: Double    -- x

@@ -9,7 +9,7 @@ module Utility.Vector3D (
 
 
 
-data Vector3D = Vector3D {x :: Double, y :: Double, z :: Double}
+data Vector3D = Vector3D {x :: !Double, y :: !Double, z :: !Double}
                 deriving Show
 
 type Normal = Vector3D

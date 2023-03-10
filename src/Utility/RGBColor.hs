@@ -14,7 +14,7 @@ module Utility.RGBColor (
 import Utility.Utility
 
 
-data RGBColor = RGBColor {r :: Double, g :: Double, b :: Double}
+data RGBColor = RGBColor {r :: !Double, g :: !Double, b :: !Double}
                 deriving Show
 
 rgbcolor :: Double -> Double -> Double -> RGBColor

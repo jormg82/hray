@@ -17,9 +17,9 @@ data Params = Params
 
 defaultParams = Params
   {
-    imageWidth   = 512,
-    aspectRatio  = 1%1,
-    pixelSize    = 10.83 / 512,
-    sampleNumber = 256
+    imageWidth   = 300,
+    aspectRatio  = 3%2,
+    pixelSize    = 1,
+    sampleNumber = 16
   }
 

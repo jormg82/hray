@@ -1,17 +1,17 @@
 module Tracer.Tracer (
-  TraceRayFn,
+  TracerFn,
   Tracer(traceRay),
   tracer
 ) where
 
 import Utility.RGBColor
 import Utility.Ray
-import Utility.Scene
 
-type TraceRayFn = Scene -> Ray -> RGBColor
 
-data Tracer = Tracer {traceRay :: TraceRayFn}
+type TracerFn = Ray -> RGBColor
 
-tracer :: TraceRayFn -> Tracer
+data Tracer = Tracer {traceRay :: TracerFn}
+
+tracer :: TracerFn -> Tracer
 tracer = Tracer
 

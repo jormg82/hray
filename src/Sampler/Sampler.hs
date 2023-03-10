@@ -65,3 +65,4 @@ genRegularSample n (p, q) = point2D ((q'+0.5)/n') ((p'+0.5)/n')
     n' = fromIntegral n
     p' = fromIntegral p
     q' = fromIntegral q
+

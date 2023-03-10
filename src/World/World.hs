@@ -54,7 +54,7 @@ build par = do
                s     = pixelSize par,
                gamma = 1.0
              }
-      tr   = testSampler
+      tr   = simpleTracer sc
       cam  = ortographic
       nSet = 83
   sp <- generateSampler (sampleNumber par) nSet multiJittered
