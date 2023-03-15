@@ -1,0 +1,68 @@
+cabal-version:      3.0
+name:               hray
+version:            0.1.0.0
+synopsis:           An experimental ray tracing application
+
+-- A longer description of the package.
+-- description:
+homepage:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+license:            NONE
+author:             Jorge L. Martin
+maintainer:         jormg82@gmail.com
+
+-- A copyright notice.
+-- copyright:
+category:           Graphics
+extra-source-files:
+    CHANGELOG.md
+    README.md
+
+executable hray
+    -- .hs or .lhs file containing the Main module.
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    other-modules:    Camera.Camera,
+                      Camera.Ortographic,
+                      HRay.Params,
+                      HRay.Scene,
+                      HRay.ShadeRec,
+                      HRay.State,
+                      HRay.ViewPlane,
+                      Object.Object,
+                      Object.Plane,
+                      Object.Sphere,
+                      Sampler.Jittered,
+                      Sampler.MultiJittered,
+                      Sampler.NRook,
+                      Sampler.PureRandom,
+                      Sampler.Regular,
+                      Sampler.Sampler,
+                      Tracer.SimpleTracer,
+                      Tracer.TestSampler,
+                      Tracer.Tracer,
+                      Utility.Constants,
+                      Utility.Point2D,
+                      Utility.Ray,
+                      Utility.RGBColor,
+                      Utility.Utility,
+                      Utility.Vector3D
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- Other library packages from which modules are imported.
+    build-depends:    base ^>=4.16.4.0,
+                      array,
+                      random,
+                      split,
+                      transformers
+
+    -- Directories containing source files.
+    hs-source-dirs:   src
+
+    -- Base language which the package is written in.
+    default-language: Haskell2010
