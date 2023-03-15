@@ -33,7 +33,7 @@ processPixel tracer (r, c) = do
   colors <- traverse (tracer . genRay x y s) samples
   nsamples <- getNumSamples
   -- Se devuelve una computacion pura, forzamos su evaluacion
-  return $! foldr1 C.add colors `C.divi` (fromIntegral nsamples)
+  return $! foldr1 C.add colors `C.divi` fromIntegral nsamples
 
 
 genRay :: Double    -- x

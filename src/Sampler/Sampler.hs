@@ -5,9 +5,9 @@ module Sampler.Sampler (
   Sampler(..),
   SampleGen,
   generateSampler,
-  sampleUnitSquare,
-  sampleUnitDisk,
-  sampleHemisphere,
+  unitSquare,
+  unitDisk,
+  hemisphere,
   genRandomSample,
   genRegularSample,
   mapSamplesToHemisphere
@@ -80,14 +80,14 @@ genRegularSample n (p, q) = point2D ((q'+0.5)/n') ((p'+0.5)/n')
     q' = fromIntegral q
 
 
-sampleUnitSquare :: Sampler -> IO [Sample2D]
-sampleUnitSquare Sampler{..} = (unitSquareSets !) <$> randomRIO (0, numSets-1)
+unitSquare :: Sampler -> IO [Sample2D]
+unitSquare Sampler{..} = (unitSquareSets !) <$> randomRIO (0, numSets-1)
 
-sampleUnitDisk :: Sampler -> IO [Sample2D]
-sampleUnitDisk Sampler{..} = (unitDiskSets !) <$> randomRIO (0, numSets-1)
+unitDisk :: Sampler -> IO [Sample2D]
+unitDisk Sampler{..} = (unitDiskSets !) <$> randomRIO (0, numSets-1)
 
-sampleHemisphere :: Sampler -> IO [Sample3D]
-sampleHemisphere Sampler{..} = (hemisphereSets !) <$> randomRIO (0, numSets-1)
+hemisphere :: Sampler -> IO [Sample3D]
+hemisphere Sampler{..} = (hemisphereSets !) <$> randomRIO (0, numSets-1)
 
 
 sampleToUnitDisk :: Sample2D -> Sample2D
@@ -104,7 +104,6 @@ sampleToUnitDisk p
     den = sqrt $ a2 + b2
 
 
--- Mapeo de
 sampleToHemisphere :: Double -> Sample2D -> Sample3D
 sampleToHemisphere e p =
   point3D (sinTheta*cosPhi) (sinTheta*sinPhi) cosTheta

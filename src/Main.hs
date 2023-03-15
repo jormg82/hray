@@ -2,7 +2,7 @@
 module Main where
 
 import Camera.Camera
-import Camera.Ortographic
+import Camera.Pinhole
 import HRay.Params
 import HRay.Scene
 import HRay.State
@@ -45,8 +45,29 @@ scene1  = Scene [sphere (point3D 0 0 0) 85 C.red] C.black
 scene2 :: Scene
 scene2 = Scene [sphere (point3D 0 (-25) 0) 80 C.red,
                 sphere (point3D 0 30 0) 60 (C.rgbcolor 1 1 0),
-                plane (point3D 0 0 0) (normal3D 0 1 1) (C.rgbcolor 0 0.3 0)]
+                --plane (point3D 0 0 0) (normal3D 0 1 1) (C.rgbcolor 0 0.3 0)]
+                plane (point3D 0 0 0) (normal3D 0 1 0) (C.rgbcolor 0 0.3 0)]
                C.black
+
+params :: Params
+params = defaultParams
+  {
+    imageWidth   = 300,
+    aspectRatio  = 3%2,
+    pixelSize    = 1.0,
+    sampleNumber = 16
+  }
+
+pinholecnf :: PinholeCnf
+pinholecnf = PinholeCnf
+  {
+    eye    = point3D 0 0 100,
+    lookat = point3D 0 0 0,
+    up     = vector3D 0 1 0,
+    d      = 50.0,
+    zoom   = 1.0,
+    exposureTime = 1.0
+  }
 
 
 build :: Params -> IO HRState
@@ -59,8 +80,6 @@ build params = do
                s     = pixelSize params,
                gamma = 1.0
              }
-      tr   = simpleTracer
-      cam  = ortographic
       nSet = 83
   sp <- generateSampler (sampleNumber params) nSet multiJittered
   return $ HRState{sampler=sp, scene=sc, viewPlane=vp}
@@ -68,9 +87,9 @@ build params = do
 
 main :: IO ()
 main = do
-  state <- build defaultParams
+  state <- build params
 
-  let renderW = renderWorld $ ortographic simpleTracer
+  let renderW = renderWorld $ (pinhole pinholecnf) simpleTracer
 
   res <- runHR renderW state
   case res of

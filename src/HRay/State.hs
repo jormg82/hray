@@ -81,17 +81,17 @@ getNumSamples = do
 sampleUnitSquare :: HR [S.Sample2D]
 sampleUnitSquare = do
   s <- sampler <$> lift get
-  liftIO $ S.sampleUnitSquare s
+  liftIO $ S.unitSquare s
 
 sampleUnitDisk :: HR [S.Sample2D]
 sampleUnitDisk = do
   s <- sampler <$> lift get
-  liftIO $ S.sampleUnitDisk s
+  liftIO $ S.unitDisk s
 
 sampleHemisphere :: HR [S.Sample3D]
 sampleHemisphere = do
   s <- sampler <$> lift get
-  liftIO $ S.sampleHemisphere s
+  liftIO $ S.hemisphere s
 
 
 mapSamplesToHemisphere :: Double -> HR ()
