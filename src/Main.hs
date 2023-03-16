@@ -3,7 +3,6 @@ module Main where
 
 import Camera.Camera
 import Camera.Pinhole
-import HRay.Params
 import HRay.Scene
 import HRay.State
 import HRay.ViewPlane
@@ -49,15 +48,6 @@ scene2 = Scene [sphere (point3D 0 (-25) 0) 80 C.red,
                 plane (point3D 0 0 0) (normal3D 0 1 0) (C.rgbcolor 0 0.3 0)]
                C.black
 
-params :: Params
-params = defaultParams
-  {
-    imageWidth   = 300,
-    aspectRatio  = 3%2,
-    pixelSize    = 1.0,
-    sampleNumber = 16
-  }
-
 pinholecnf :: PinholeCnf
 pinholecnf = PinholeCnf
   {
@@ -70,24 +60,24 @@ pinholecnf = PinholeCnf
   }
 
 
-build :: Params -> IO HRState
-build params = do
+build :: IO HRState
+build = do
   let sc   = scene2
       vp   = ViewPlane {
-               hres  = imageWidth params,
-               vres  = floor $ fromIntegral (imageWidth params) /
-                               aspectRatio params,
-               s     = pixelSize params,
+               hres  = 300,
+               vres  = 200,
+               s     = 1.0,
                gamma = 1.0
              }
+      sampleNumber = 16
       nSet = 83
-  sp <- generateSampler (sampleNumber params) nSet multiJittered
+  sp <- generateSampler sampleNumber nSet multiJittered
   return $ HRState{sampler=sp, scene=sc, viewPlane=vp}
 
 
 main :: IO ()
 main = do
-  state <- build params
+  state <- build
 
   let renderW = renderWorld $ (pinhole pinholecnf) simpleTracer
 

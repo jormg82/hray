@@ -118,3 +118,4 @@ getPixelSize = (s . viewPlane) <$> lift get
 
 getGamma :: HR Double
 getGamma = (gamma . viewPlane) <$> lift get
+

@@ -28,7 +28,6 @@ executable hray
     other-modules:    Camera.Camera,
                       Camera.Ortographic,
                       Camera.Pinhole,
-                      HRay.Params,
                       HRay.Scene,
                       HRay.ShadeRec,
                       HRay.State,
