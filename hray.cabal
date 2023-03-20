@@ -25,25 +25,23 @@ executable hray
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    other-modules:    Camera.Camera,
+    other-modules:    Camera.Function,
                       Camera.Ortographic,
                       Camera.Pinhole,
-                      HRay.Scene,
                       HRay.ShadeRec,
-                      HRay.State,
-                      HRay.ViewPlane,
+                      HRay.HRay,
+                      Object.Box,
                       Object.Object,
                       Object.Plane,
                       Object.Sphere,
+                      Object.Triangle,
                       Sampler.Jittered,
                       Sampler.MultiJittered,
                       Sampler.NRook,
                       Sampler.PureRandom,
                       Sampler.Regular,
                       Sampler.Sampler,
-                      Tracer.SimpleTracer,
-                      Tracer.TestSampler,
-                      Tracer.Tracer,
+                      Tracer.Simple,
                       Utility.Constants,
                       Utility.Point2D,
                       Utility.Ray,
@@ -66,3 +64,4 @@ executable hray
 
     -- Base language which the package is written in.
     default-language: Haskell2010
+

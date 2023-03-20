@@ -1,15 +1,13 @@
 
-module Tracer.SimpleTracer(simpleTracer) where
+module Tracer.Simple(simple) where
 
-import HRay.Scene
 import HRay.ShadeRec
-import HRay.State
+import HRay.HRay
 import Object.Object
-import Tracer.Tracer
 
 
-simpleTracer :: Tracer
-simpleTracer ray = do
+simple :: Tracer
+simple ray = do
   sc <- getScene
   case hit (objects sc) ray of
     Nothing        -> return $ backgroundColor sc

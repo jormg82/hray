@@ -1,5 +1,6 @@
+{-# LANGUAGE RecordWildCards #-}
 
-module Camera.Ortographic(Ortographic(..)) where
+module Camera.Function(Function(..), function) where
 
 import HRay.HRay
 import qualified Utility.RGBColor as C
@@ -12,44 +13,36 @@ import Control.Monad(forM, when)
 
 
 -- OJO poner datos de la camara
-data Ortographic = Ortographic
+data Function = Function
+  {
+    fun :: P.Point2D -> C.RGBColor
+  }
 
-ortographic :: Camera
-ortographic = Camera Ortographic
+function :: Function -> Camera
+function = Camera
 
 
-instance Renderizer Ortographic where
-  render Ortographic = do
+instance Renderizer Function where
+  render Function{..} = do
     vres <- getVRes
     hres <- getHRes
     let rows    = [vres-1, vres-2..0]
         columns = [0..hres-1]
         pairs   = [(r, c) | r <- rows, c <- columns]
-    forM pairs processPixel
+    forM pairs (processPixel fun)
 
 
 
-processPixel :: (Int, Int) -> HR C.RGBColor
-processPixel (r, c) = do
+processPixel :: (P.Point2D -> C.RGBColor)
+             -> (Int, Int)
+             -> HR C.RGBColor
+processPixel f (r, c) = do
   when (c == 0) $ writeErrLn $ "Scanlines remaining: " ++ show r
-  samples <- sampleUnitSquare
   (hres, vres, s) <- (,,) <$> getHRes <*> getVRes <*> getPixelSize
   let x      = s * (fromIntegral c - 0.5*fromIntegral hres)
       y      = s * (fromIntegral r - 0.5*fromIntegral vres)
-  colors <- traverse (trace . genRay x y s) samples
+  colors <- map f <$> sampleUnitSquare
   nsamples <- getNumSamples
   -- Se devuelve una computacion pura, forzamos su evaluacion
   return $! foldr1 C.add colors `C.divi` fromIntegral nsamples
-
-
-genRay :: Double    -- x
-       -> Double    -- y
-       -> Double    -- s
-       -> P.Point2D -- Point in [0,1]^2
-       -> Ray
-genRay x y s p = ray (point3D (p'&P.x) (p'&P.y) zw) dir
-  where
-    zw = 100
-    dir = vector3D 0 0 (-1)
-    p' = P.point2D (x + s*(p&P.x)) (y + s*(p&P.y))
 

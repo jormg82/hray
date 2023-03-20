@@ -1,6 +1,6 @@
+{-# LANGUAGE GADTs #-}
 
 module Object.Object (
-  Hit,
   Object(..),
   Hittable(..),
 ) where
@@ -13,17 +13,16 @@ import Data.Maybe(catMaybes, listToMaybe)
 import Data.List(sortOn)
 
 
-type Hit = Ray -> Maybe (Double, ShadeRec)
-
-newtype Object = Object Hit
-
 
 class Hittable a where
-  hit :: a -> Hit
-
-instance Hittable Object where
-  hit (Object f) = f
+  hit :: a -> Ray -> Maybe (Double, ShadeRec)
 
 instance Hittable a => Hittable [a] where
   hit xs r = listToMaybe $ sortOn fst $ catMaybes $ map (flip hit r) xs
 
+
+data Object where
+  Object :: Hittable a => {object :: a} -> Object
+
+instance Hittable Object where
+  hit (Object o) = hit o

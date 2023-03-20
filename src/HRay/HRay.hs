@@ -1,5 +1,11 @@
+{-# LANGUAGE GADTs #-}
 
-module HRay.State (
+module HRay.HRay (
+  Camera(..),
+  Scene(..),
+  Renderizer(..),
+  Tracer,
+  ViewPlane(..),
   HRState(..),
   HR,
   runHR,
@@ -7,12 +13,15 @@ module HRay.State (
   try,
   writeStdLn,
   writeErrLn,
+  getCamera,
   getNumSamples,
   sampleUnitSquare,
   sampleUnitDisk,
   sampleHemisphere,
   mapSamplesToHemisphere,
   getScene,
+  getTracer,
+  trace,
   getHRes,
   getVRes,
   getPixelSize, 
@@ -20,8 +29,7 @@ module HRay.State (
 ) where
 
 
-import HRay.Scene
-import HRay.ViewPlane
+import Object.Object
 import qualified Sampler.Sampler as S
 import Utility.RGBColor
 import Utility.Ray
@@ -34,19 +42,54 @@ import System.IO
 
 
 
+-- Camera defs
+class Renderizer a where
+  render :: a -> HR [RGBColor]
+
+data Camera where
+ Camera :: Renderizer a => {renderizer :: a} -> Camera
+
+instance Renderizer Camera where
+  render (Camera r) = render r
+
+
+-- Scene
+data Scene = Scene {objects :: [Object], backgroundColor :: RGBColor}
+
+
+-- Tracer
+type Tracer = Ray -> HR RGBColor
+
+
+-- ViewPlane
+data ViewPlane = ViewPlane
+  {
+    hres  :: Int,    -- Horizontal resolution
+    vres  :: Int,    -- Vertical resolution
+    s     :: Double, -- Pixel size
+    gamma :: Double  -- Gamma correction
+  }
+  deriving Show
+
+
+-- State
 data HRState = HRState
   {
+    camera    :: Camera,
     sampler   :: S.Sampler,
     scene     :: Scene,
+    tracer    :: Tracer,
     viewPlane :: ViewPlane
   }
 
 
 type HR = ExceptT String (StateT HRState IO)
 
+
 runHR :: HR a -> HRState -> IO (Either String a)
 runHR = evalStateT . runExceptT
  
+
 
 -- error
 throw :: String -> HR a
@@ -68,6 +111,12 @@ writeErrLn :: String -> HR ()
 writeErrLn s = do
   liftIO $ hPutStr stderr blanks
   liftIO $ hPutStr stderr s
+
+
+
+-- Camera access
+getCamera :: HR Camera
+getCamera = camera <$> lift get
 
 
 
@@ -103,7 +152,15 @@ mapSamplesToHemisphere e = do
 
 -- Scene
 getScene :: HR Scene
-getScene = lift get >>= return . scene
+getScene = scene <$> lift get
+
+
+-- Tracer
+getTracer :: HR Tracer
+getTracer = tracer <$> lift get
+
+trace :: Ray -> HR RGBColor
+trace ray = (tracer <$> lift get) >>= ($ ray)
 
 
 -- Acceso a ViewPlane

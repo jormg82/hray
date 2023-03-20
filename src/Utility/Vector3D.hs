@@ -3,10 +3,12 @@
 module Utility.Vector3D (
   Vector3D(..),
   Normal, Point3D, ONB(..),
+  Eye, LookAt, Up,
   vector3D, point3D, normal3D,
   add, diff, mul, divi,
   dot, cross,
-  normalize
+  normalize,
+  computeUVW
 ) where
 
 
@@ -16,6 +18,11 @@ data Vector3D = Vector3D {x :: !Double, y :: !Double, z :: !Double}
 
 type Normal = Vector3D
 type Point3D = Vector3D
+
+type Eye    = Point3D
+type LookAt = Point3D
+type Up     = Vector3D
+
 
 data ONB = ONB {u :: Vector3D, v :: Vector3D, w :: Vector3D}
            deriving Show
@@ -51,3 +58,10 @@ cross (Vector3D a b c) (Vector3D a' b' c') =
 normalize :: Vector3D -> Vector3D
 normalize v@Vector3D{..} = v `divi` (sqrt $ x*x + y*y + z*z)
 
+
+computeUVW :: Eye -> LookAt -> Up -> ONB
+computeUVW eye lookat up = ONB{u=u, v=v, w=w}
+  where
+    w = normalize $ eye `diff` lookat
+    u = normalize $ up `cross` w
+    v = w `cross` u

@@ -1,5 +1,5 @@
 
-module Object.Plane (plane) where
+module Object.Plane (Plane(..), plane) where
 
 
 import HRay.ShadeRec
@@ -10,16 +10,17 @@ import Utility.Ray
 import Utility.Utility
 import Utility.Vector3D
 
+data Plane = Plane Point3D Normal C.RGBColor
+             deriving Show
 
-plane :: Point3D -> Normal -> C.RGBColor -> Object
-plane p n c = Object $ hitPlane p n c
+plane :: Point3D -> Point3D -> C.RGBColor -> Object
+plane p n c = Object $ Plane p n c
 
-
-hitPlane :: Point3D -> Normal -> C.RGBColor -> Hit
-hitPlane point normal color ray
-  | epsilon < t && t < inf = Just (t, sRec)
-  | otherwise              = Nothing
-  where
-    t    = dot (diff point (ray&o)) normal / dot (ray&d) normal
-    sRec = ShadeRec (hitPoint ray t) normal color
+instance Hittable Plane where
+  hit (Plane point normal color) ray
+    | epsilon < t && t < inf = Just (t, sRec)
+    | otherwise              = Nothing
+    where
+      t    = dot (diff point (ray&o)) normal / dot (ray&d) normal
+      sRec = ShadeRec (hitPoint ray t) normal color
 

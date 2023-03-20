@@ -1,12 +1,10 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TupleSections #-}
 
-module Camera.Pinhole(PinholeCnf(..), pinhole) where
+module Camera.Pinhole(Pinhole(..), pinhole) where
 
-import Camera.Camera
-import HRay.State
+import HRay.HRay
 import Sampler.Sampler
-import Tracer.Tracer
 import qualified Utility.RGBColor as C
 import qualified Utility.Point2D as P
 import Utility.Ray
@@ -16,7 +14,7 @@ import Utility.Vector3D
 import Control.Monad(when)
 
 
-data PinholeCnf = PinholeCnf
+data Pinhole = Pinhole
   {
     eye    :: Eye,
     lookat :: LookAt,
@@ -28,16 +26,19 @@ data PinholeCnf = PinholeCnf
   deriving Show
 
 
+pinhole :: Pinhole -> Camera
+pinhole = Camera 
 
-pinhole :: PinholeCnf -> Camera
-pinhole cnf@PinholeCnf{..} tracer = do
-  vres <- getVRes
-  hres <- getHRes
-  let onb     = computeUVW eye lookat up
-      rows    = [vres-1, vres-2..0]
-      columns = [0..hres-1]
-      pairs   = [(r, c) | r <- rows, c <- columns]
-  traverse (processPixel eye d zoom onb tracer) pairs
+
+instance Renderizer Pinhole where
+  render Pinhole{..} = do
+    vres <- getVRes
+    hres <- getHRes
+    let onb     = computeUVW eye lookat up
+        rows    = [vres-1, vres-2..0]
+        columns = [0..hres-1]
+        pairs   = [(r, c) | r <- rows, c <- columns]
+    traverse (processPixel eye d zoom onb) pairs
 
 
 
@@ -45,10 +46,9 @@ processPixel :: Eye
              -> Double  -- Viewplane distance
              -> Double  -- Zoom
              -> ONB
-             -> Tracer
              -> (Int, Int)
              -> HR C.RGBColor
-processPixel eye d zoom onb tracer (r, c) = do
+processPixel eye d zoom onb (r, c) = do
   when (c == 0) $ writeErrLn $ "Scanlines remaining: " ++ show r
 
   vres <- getVRes
@@ -57,6 +57,7 @@ processPixel eye d zoom onb tracer (r, c) = do
 
   samples  <- sampleUnitSquare
   let rays = map (ray eye . genDir onb d vres hres s (r, c)) samples
+  tracer   <- getTracer
   colors   <- traverse tracer rays
   nsamples <- getNumSamples
 
