@@ -12,7 +12,6 @@ import Utility.Vector3D
 import Control.Monad(forM, when)
 
 
--- OJO poner datos de la camara
 data Function = Function
   {
     fun :: P.Point2D -> C.RGBColor
