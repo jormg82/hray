@@ -40,8 +40,15 @@ processPixel f (r, c) = do
   (hres, vres, s) <- (,,) <$> getHRes <*> getVRes <*> getPixelSize
   let x      = s * (fromIntegral c - 0.5*fromIntegral hres)
       y      = s * (fromIntegral r - 0.5*fromIntegral vres)
-  colors <- map f <$> sampleUnitSquare
+  colors <- map (f . genPoint x y s) <$> sampleUnitSquare
   nsamples <- getNumSamples
   -- Se devuelve una computacion pura, forzamos su evaluacion
   return $! foldr1 C.add colors `C.divi` fromIntegral nsamples
 
+
+genPoint :: Double    -- x
+         -> Double    -- y
+         -> Double    -- s
+         -> P.Point2D -- Point in [0,1]^2
+         -> P.Point2D
+genPoint x y s p = P.point2D (x + s*(p&P.x)) (y + s*(p&P.y))

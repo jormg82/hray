@@ -28,6 +28,7 @@ executable hray
     other-modules:    Camera.Function,
                       Camera.Ortographic,
                       Camera.Pinhole,
+                      Camera.ThinLens,
                       HRay.ShadeRec,
                       HRay.HRay,
                       Object.Box,

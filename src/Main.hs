@@ -1,7 +1,9 @@
 
 module Main where
 
-import Camera.Pinhole
+import Camera.Function
+--import Camera.Pinhole
+import Camera.ThinLens
 import HRay.HRay
 import Object.Box
 import Object.Object
@@ -12,9 +14,11 @@ import Sampler.Sampler
 import Sampler.MultiJittered
 import Tracer.Simple
 import qualified Utility.RGBColor as C
+import qualified Utility.Point2D as P
 import Utility.Utility
 import Utility.Vector3D
 
+import qualified Debug.Trace as D
 import Data.Foldable(traverse_)
 import Data.Ratio
 
@@ -47,8 +51,13 @@ scene2 = Scene [sphere (point3D 0 (-25) 0) 80 C.red,
                C.black
 
 scene3 :: Scene
-scene3  = Scene [box (point3D (-1) (-1) (-1))
-                     (point3D 2 2 2) C.blue] C.black
+scene3  = Scene [box (point3D (-100) 0 (-200))
+                     (point3D (-50) 200 (-150)) C.blue,
+                 box (point3D (-200) 0 (-100))
+                     (point3D (-150) 100 (-50)) C.blue,
+                 plane (point3D 0 (-10) 0) (normal3D 0 1 0) (C.gray 0.3),
+                 box (point3D (-100) 0 (-800))
+                     (point3D (-50) 300 (-550)) C.blue] C.black
 
 scene4 :: Scene
 scene4  = Scene [triangle (point3D (-30) 59 10)
@@ -58,19 +67,21 @@ scene4  = Scene [triangle (point3D (-30) 59 10)
 
 build :: IO HRState
 build = do
-  let cam = Camera $ Pinhole {
-              eye    = point3D 200 200 200,
+  let cam = thinLens $ ThinLens {
+              eye    = point3D 0 10 150,
               lookat = point3D 0 0 0,
               up     = vector3D 0 1 0,
-              d      = 150,
+              d      = 200,
+              lensRadius = 10,
+              f      = 300,
               zoom   = 1.0,
               exposureTime = 1.0
             }
       sc  = scene3
       tr = simple
       vp  = ViewPlane {
-              hres  = 200,
-              vres  = 200,
+              hres  = 600,
+              vres  = 400,
               s     = 1.0,
               gamma = 1.0
             }

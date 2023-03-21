@@ -47,7 +47,7 @@ class Renderizer a where
   render :: a -> HR [RGBColor]
 
 data Camera where
- Camera :: Renderizer a => {renderizer :: a} -> Camera
+  Camera :: Renderizer a => a -> Camera
 
 instance Renderizer Camera where
   render (Camera r) = render r
@@ -160,7 +160,9 @@ getTracer :: HR Tracer
 getTracer = tracer <$> lift get
 
 trace :: Ray -> HR RGBColor
-trace ray = (tracer <$> lift get) >>= ($ ray)
+trace ray = do
+  tr <- tracer <$> lift get
+  tr ray
 
 
 -- Acceso a ViewPlane
